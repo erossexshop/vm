@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalle de Producto — Eros Sex Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══ BASE (idéntico al principal) ══════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#000;color:#f0e6f0;font-family:'Montserrat',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;min-height:100vh;}
+:root{
+  --neon:#ff2d78;--neon-light:#ff6ba8;
+  --neon-glow:0 0 8px #ff2d78,0 0 24px rgba(255,45,120,.4);
+  --neon-glow-lg:0 0 14px #ff2d78,0 0 40px rgba(255,45,120,.3),0 0 80px rgba(255,45,120,.1);
+  --bg:#000;--bg-tint:#0d0007;--bg-card:#0a0005;
+  --border:rgba(255,45,120,.16);--border-mid:rgba(255,45,120,.32);
+  --text:#f0e6f0;--text-muted:rgba(240,200,220,.45);--text-dim:rgba(240,200,220,.22);
+}
+
+/* ══ ANNOUNCE ══ */
+.announce{background:linear-gradient(90deg,#140009,#200012,#140009);border-bottom:1px solid var(--border);text-align:center;padding:8px 16px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--neon-light);}
+.announce span{color:var(--neon);text-shadow:var(--neon-glow);}
+
+/* ══ HEADER ══ */
+.site-header{position:sticky;top:0;z-index:300;background:rgba(0,0,0,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.header-topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 28px;height:110px;max-width:1280px;margin:0 auto;}
+.topbar-left{display:flex;align-items:center;gap:8px;}
+.topbar-right{display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+.logo-link{display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.logo-link img{height:90px;width:auto;max-width:240px;object-fit:contain;display:block;filter:drop-shadow(0 0 12px rgba(255,45,120,.7)) drop-shadow(0 0 32px rgba(255,45,120,.35));transition:filter .35s;}
+.logo-link:hover img{filter:drop-shadow(0 0 18px rgba(255,45,120,.95)) drop-shadow(0 0 50px rgba(255,45,120,.5));}
+.h-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:none;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .2s,border-color .2s,box-shadow .2s;font-family:inherit;}
+.h-btn:hover{color:var(--neon);border-color:var(--neon);box-shadow:0 0 10px rgba(255,45,120,.2);}
+.h-btn svg{width:16px;height:16px;flex-shrink:0;}
+.ham-btn{display:none;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:38px;height:38px;background:none;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:border-color .2s;}
+.ham-btn:hover{border-color:var(--neon);}
+.ham-btn span{display:block;width:18px;height:1.5px;background:var(--text-muted);transition:all .3s;}
+
+/* ══ NAV ══ */
+.nav-wrap{border-top:1px solid var(--border);background:linear-gradient(180deg,#0a0005 0%,#000 100%);}
+.main-nav{display:flex;align-items:center;justify-content:center;max-width:1280px;margin:0 auto;}
+.nav-item{position:relative;}
+.nav-link{display:flex;align-items:center;gap:5px;padding:13px 30px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);background:none;border:none;text-decoration:none;cursor:pointer;font-family:inherit;white-space:nowrap;position:relative;transition:color .2s;}
+.nav-link:hover,.nav-item:hover>.nav-link{color:var(--text);}
+.nav-link svg{width:9px;height:9px;color:var(--neon);opacity:.6;flex-shrink:0;transition:transform .25s,opacity .2s;}
+.nav-item:hover>.nav-link svg{transform:rotate(180deg);opacity:1;}
+.nav-link::after{content:'';position:absolute;bottom:0;left:30px;right:30px;height:1px;background:var(--neon);box-shadow:0 0 6px var(--neon);transform:scaleX(0);transition:transform .25s;}
+.nav-link:hover::after{transform:scaleX(1);}
+
+/* ══ DROPDOWNS ══ */
+.dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(-8px);background:#0a0005;border:1px solid var(--border-mid);border-top:2px solid var(--neon);box-shadow:0 20px 60px rgba(0,0,0,.9),var(--neon-glow-lg);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:400;}
+.nav-item:hover>.dropdown{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0);}
+.mega-menu{width:520px;padding:24px 28px 22px;max-height:calc(100vh - 160px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,45,120,.25) transparent;}
+.mega-menu::-webkit-scrollbar{width:3px;}
+.mega-menu::-webkit-scrollbar-thumb{background:rgba(255,45,120,.3);border-radius:2px;}
+.mega-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 24px;}
+.mega-col-label{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--neon);opacity:.75;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.mega-link{display:flex;align-items:center;gap:0;padding:7px 0;font-size:11.5px;letter-spacing:.04em;color:var(--text-muted);text-decoration:none;background:none;border:none;font-family:inherit;font-weight:400;cursor:pointer;text-align:left;white-space:nowrap;transition:color .15s,padding-left .15s;}
+.mega-link:hover{color:var(--text);padding-left:8px;}
+.mega-link::before{content:'';flex-shrink:0;width:0;height:0;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);transition:width .15s,height .15s,margin-right .15s;}
+.mega-link:hover::before{width:4px;height:4px;margin-right:8px;}
+.contact-menu{width:190px;padding:8px 0;}
+.contact-link{display:flex;align-items:center;gap:10px;padding:12px 20px;font-size:11px;letter-spacing:.06em;color:var(--text-muted);text-decoration:none;transition:color .15s,background .15s;}
+.contact-link:hover{color:var(--text);background:rgba(255,45,120,.06);}
+.contact-link svg{width:14px;height:14px;flex-shrink:0;color:var(--neon);}
+
+/* ══ FOOTER ══ */
+footer{background:var(--bg-tint);border-top:1px solid var(--border);padding:56px 24px 28px;}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:44px;}
+.f-logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.f-logo-img{height:44px;width:auto;filter:drop-shadow(0 0 8px rgba(255,45,120,.5));}
+.f-desc{font-size:11.5px;color:var(--text-dim);line-height:1.9;letter-spacing:.02em;}
+.f-socials{display:flex;gap:8px;margin-top:18px;}
+.f-soc{width:32px;height:32px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;transition:color .2s,border-color .2s,box-shadow .2s;}
+.f-soc:hover{color:var(--neon);border-color:var(--neon);box-shadow:0 0 8px rgba(255,45,120,.2);}
+.f-soc svg{width:13px;height:13px;}
+.f-col h4{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--neon);opacity:.7;margin-bottom:16px;font-weight:500;}
+.f-col a{display:block;font-size:11.5px;color:var(--text-dim);text-decoration:none;margin-bottom:10px;letter-spacing:.03em;transition:color .15s;}
+.f-col a:hover{color:var(--text);}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:9.5px;color:var(--text-dim);letter-spacing:.06em;}
+.footer-bottom a{color:var(--text-dim);text-decoration:none;transition:color .15s;}
+.footer-bottom a:hover{color:var(--neon);}
+
+/* ══ WA FLOAT ══ */
+.wa-float{position:fixed;bottom:24px;right:24px;width:50px;height:50px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;z-index:999;box-shadow:0 4px 20px rgba(37,211,102,.35);transition:transform .2s,box-shadow .2s;}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(37,211,102,.55);}
+.wa-float svg{width:22px;height:22px;}
+
+/* ══ DRAWER ══ */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:900;opacity:0;transition:opacity .3s;}
+.drawer-overlay.open{display:block;opacity:1;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(300px,86vw);background:#0a0005;border-left:1px solid var(--border-mid);z-index:901;overflow-y:auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.drawer.open{transform:translateX(0);}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.drawer-logo{height:40px;width:auto;filter:drop-shadow(0 0 8px rgba(255,45,120,.55));}
+.drawer-close{background:none;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;font-family:inherit;transition:color .2s,border-color .2s;}
+.drawer-close:hover{color:var(--neon);border-color:var(--neon);}
+.dm-link{display:block;padding:15px 20px;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;border-bottom:1px solid rgba(255,45,120,.07);transition:color .15s;}
+.dm-link:hover{color:var(--text);}
+.drawer-section-label{padding:18px 20px 8px;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--neon);opacity:.6;}
+.dc-link{display:block;padding:11px 20px;font-size:11.5px;color:var(--text-muted);text-decoration:none;letter-spacing:.03em;transition:color .15s,padding-left .15s;}
+.dc-link:hover{color:var(--text);padding-left:28px;}
+.drawer-contact{margin-top:auto;padding:18px 20px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.dc-contact{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:.04em;transition:color .15s;}
+.dc-contact:hover{color:var(--neon);}
+.dc-contact svg{width:14px;height:14px;flex-shrink:0;color:var(--neon);}
+
+/* ══ DETALLE DE PRODUCTO ══════════════════════════════════════════════ */
+
+/* Breadcrumb */
+.breadcrumb{
+  max-width:1280px;margin:0 auto;
+  padding:20px 28px 0;
+  display:flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.breadcrumb a{color:var(--text-dim);text-decoration:none;transition:color .15s;}
+.breadcrumb a:hover{color:var(--neon);}
+.breadcrumb span{color:var(--neon);opacity:.5;}
+.breadcrumb-current{color:var(--text-muted);}
+
+/* Layout principal */
+.detail-wrap{
+  max-width:1280px;margin:0 auto;
+  padding:32px 28px 80px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:56px;
+  align-items:start;
+}
+
+/* ── Columna imagen ── */
+.detail-gallery{position:relative;}
+.detail-img-main{
+  width:100%;
+  aspect-ratio:1;
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  background:#060003;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.detail-img-main img{
+  width:100%;height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  transition:transform .5s ease;
+}
+.detail-img-main img:hover{transform:scale(1.03);}
+.detail-emoji-lg{
+  font-size:120px;opacity:.12;user-select:none;
+}
+/* glow en las esquinas de la imagen */
+.detail-img-main::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(255,45,120,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255,45,120,.04) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* badge */
+.detail-badge{
+  position:absolute;top:14px;left:14px;z-index:2;
+  display:flex;flex-direction:column;gap:5px;
+}
+.d-badge{
+  display:inline-block;padding:4px 10px;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;border-radius:2px;
+}
+.d-badge-free{background:rgba(0,0,0,.8);border:1px solid rgba(255,45,120,.5);color:var(--neon);text-shadow:0 0 6px rgba(255,45,120,.4);}
+.d-badge-off{background:var(--neon);color:#fff;}
+
+/* ── Columna info ── */
+.detail-info{
+  position:sticky;top:130px;
+  display:flex;flex-direction:column;gap:20px;
+}
+
+.detail-cat{
+  font-size:9px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--neon);opacity:.7;
+}
+.detail-name{
+  font-size:clamp(22px,3vw,36px);font-weight:300;
+  letter-spacing:.02em;line-height:1.2;
+  color:var(--text);
+}
+.detail-divider{
+  height:1px;
+  background:linear-gradient(90deg,var(--neon),transparent);
+  opacity:.25;
+}
+
+/* Precio */
+.detail-price-wrap{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+.detail-price{
+  font-size:clamp(28px,4vw,42px);font-weight:300;
+  color:#fff;letter-spacing:.01em;
+}
+.detail-price-old{font-size:16px;color:var(--text-dim);text-decoration:line-through;}
+.detail-price-off{
+  font-size:11px;font-weight:700;color:var(--neon);letter-spacing:.06em;
+  text-shadow:0 0 8px rgba(255,45,120,.4);
+}
+
+/* Descripción / specs */
+.detail-desc{
+  font-size:13px;color:var(--text-muted);line-height:1.9;letter-spacing:.02em;
+}
+.detail-specs{
+  display:flex;flex-direction:column;gap:0;
+  border:1px solid var(--border);border-radius:4px;overflow:hidden;
+}
+.spec-row{
+  display:flex;
+  border-bottom:1px solid var(--border);
+}
+.spec-row:last-child{border-bottom:none;}
+.spec-label{
+  width:42%;padding:11px 16px;
+  font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);background:rgba(255,45,120,.03);
+  border-right:1px solid var(--border);flex-shrink:0;
+}
+.spec-value{
+  padding:11px 16px;
+  font-size:12px;color:var(--text-muted);letter-spacing:.03em;
+}
+
+/* Botones CTA */
+.detail-actions{display:flex;flex-direction:column;gap:12px;margin-top:4px;}
+.btn-wa-main{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#25D366;color:#fff;
+  border:none;border-radius:2px;
+  padding:16px 24px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;font-family:inherit;text-decoration:none;
+  transition:background .2s,box-shadow .2s,transform .15s;
+}
+.btn-wa-main:hover{
+  background:#1db954;
+  box-shadow:0 0 28px rgba(37,211,102,.45);
+  transform:translateY(-1px);
+}
+.btn-wa-main svg{width:20px;height:20px;flex-shrink:0;}
+
+.btn-back{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:none;
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:13px 24px;
+  font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-muted);cursor:pointer;font-family:inherit;text-decoration:none;
+  transition:color .2s,border-color .2s;
+}
+.btn-back:hover{color:var(--text);border-color:rgba(255,45,120,.4);}
+
+/* Trust mini */
+.detail-trust{
+  display:flex;gap:20px;flex-wrap:wrap;padding-top:8px;
+  border-top:1px solid var(--border);
+}
+.dtrust-item{
+  display:flex;align-items:center;gap:7px;
+  font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);
+}
+.dtrust-item svg{width:13px;height:13px;color:var(--neon);flex-shrink:0;}
+
+/* Productos relacionados */
+.related-section{
+  max-width:1280px;margin:0 auto;
+  padding:0 28px 72px;
+  border-top:1px solid var(--border);padding-top:48px;
+}
+.related-title{
+  font-size:clamp(16px,2.5vw,22px);font-weight:300;
+  letter-spacing:.04em;color:var(--text);
+  margin-bottom:28px;
+}
+.related-title em{font-style:normal;color:var(--neon);}
+.related-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+}
+.related-card{
+  background:#0a0005;border:1px solid rgba(255,45,120,.12);border-radius:4px;
+  overflow:hidden;text-decoration:none;
+  display:flex;flex-direction:column;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+}
+.related-card:hover{
+  border-color:rgba(255,45,120,.45);
+  transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.related-img{width:100%;height:140px;overflow:hidden;background:#060003;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.related-img img{width:100%;height:140px;object-fit:cover;transition:transform .4s;}
+.related-card:hover .related-img img{transform:scale(1.05);}
+.related-emoji{font-size:44px;opacity:.15;}
+.related-body{padding:12px 14px;}
+.related-name{font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s;}
+.related-card:hover .related-name{color:var(--text);}
+.related-price{font-size:16px;font-weight:300;color:#fff;margin-top:6px;}
+
+/* Estado de carga / error */
+.detail-loading,.detail-error{
+  max-width:1280px;margin:0 auto;
+  padding:80px 28px;text-align:center;
+  font-size:13px;color:var(--text-dim);letter-spacing:.06em;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+}
+.detail-error a{color:var(--neon);text-decoration:none;}
+.detail-error a:hover{text-decoration:underline;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-icon{font-size:32px;animation:spin 1s linear infinite;display:inline-block;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:900px){
+  .detail-wrap{grid-template-columns:1fr;gap:32px;}
+  .detail-info{position:static;}
+  .footer-inner{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .ham-btn{display:flex;}
+  .nav-wrap{display:none;}
+  .header-topbar{height:80px;padding:0 16px;}
+  .logo-link img{height:64px;}
+  .topbar-left .h-btn:not(.ham-btn){display:none;}
+  .detail-wrap{padding:24px 16px 60px;}
+  .breadcrumb{padding:16px 16px 0;}
+  .related-section{padding:40px 16px 60px;}
+  .footer-inner{grid-template-columns:1fr;gap:28px;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:440px){
+  .related-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .detail-name{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ANNOUNCE -->
+<div class="announce">
+  <span>✦</span> Envíos a todo el país · Compra 100% privada · Pagá por WhatsApp <span>✦</span>
+</div>
+
+<!-- HEADER (idéntico al principal) -->
+<header class="site-header">
+  <div class="header-topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="h-btn" title="Volver al catálogo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </a>
+      <button class="ham-btn" onclick="openDrawer()" aria-label="Menú" style="display:none">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <a class="logo-link" href="index.html" aria-label="Eros Sex Shop — Inicio">
+      <img src="https://i.ibb.co/wZNYJVXL/eros-logo-transparente-4k.png" alt="Eros Sex Shop"
+           onerror="this.outerHTML='<span style=\'font-size:13px;letter-spacing:.2em;color:#ff2d78;text-shadow:0 0 12px #ff2d78;font-weight:600;\'>EROS SEX SHOP</span>'">
+    </a>
+    <div class="topbar-right">
+      <a class="h-btn" href="https://instagram.com/eros.sexshop.vm" target="_blank" rel="noopener" title="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a class="h-btn" href="https://wa.me/5493534418865" target="_blank" rel="noopener" title="WhatsApp"
+         style="border-color:rgba(37,211,102,.3);color:rgba(37,211,102,.7)"
+         onmouseover="this.style.borderColor='#25D366';this.style.color='#25D366';this.style.boxShadow='0 0 10px rgba(37,211,102,.25)'"
+         onmouseout="this.style.borderColor='rgba(37,211,102,.3)';this.style.color='rgba(37,211,102,.7)';this.style.boxShadow='none'">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="nav-wrap">
+    <nav class="main-nav">
+      <div class="nav-item"><a href="index.html" class="nav-link">Inicio</a></div>
+      <div class="nav-item">
+        <button class="nav-link" type="button">Productos
+          <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
+        </button>
+        <div class="dropdown mega-menu">
+          <div class="mega-cols">
+            <div>
+              <div class="mega-col-label">Placer</div>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Vibradores')">Vibradores</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Succionadores')">Succionadores</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Realistas')">Realistas</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Masturbadores')">Masturbadores</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Anillos')">Anillos</a>
+            </div>
+            <div>
+              <div class="mega-col-label">Exploración</div>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Anal')">Anal</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','BDSM')">BDSM</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Parejas')">Parejas</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Bolas chinas')">Bolas chinas</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Juegos')">Juegos</a>
+            </div>
+            <div>
+              <div class="mega-col-label">Cuidado</div>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Geles y lubricantes')">Geles y lubricantes</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Fragancias')">Fragancias</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Copas menstruales')">Copas menstruales</a>
+              <a class="mega-link" href="index.html#productos-section" onclick="sessionStorage.setItem('filtro','Cuidados e higiene')">Cuidados e higiene</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" type="button">Contacto
+          <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
+        </button>
+        <div class="dropdown contact-menu">
+          <a class="contact-link" href="https://instagram.com/eros.sexshop.vm" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            Instagram
+          </a>
+          <a class="contact-link" href="https://wa.me/5493534418865" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header">
+    <img class="drawer-logo" src="https://i.ibb.co/wZNYJVXL/eros-logo-transparente-4k.png" alt="Eros Sex Shop"
+         onerror="this.outerHTML='<span style=\'font-size:10px;letter-spacing:.2em;color:#ff2d78;font-weight:600;\'>EROS</span>'">
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <a class="dm-link" href="index.html">Inicio / Catálogo</a>
+  <div class="drawer-section-label">Placer</div>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Vibradores')">Vibradores</a>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Succionadores')">Succionadores</a>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Anillos')">Anillos</a>
+  <div class="drawer-section-label">Exploración</div>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Anal')">Anal</a>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','BDSM')">BDSM</a>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Parejas')">Parejas</a>
+  <div class="drawer-section-label">Cuidado</div>
+  <a class="dc-link" href="index.html" onclick="sessionStorage.setItem('filtro','Geles y lubricantes')">Geles y lubricantes</a>
+  <div class="drawer-contact">
+    <a class="dc-contact" href="https://wa.me/5493534418865" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+      +54 9 353 424-8988
+    </a>
+  </div>
+</aside>
+
+<!-- BREADCRUMB (se rellena por JS) -->
+<div class="breadcrumb" id="breadcrumb">
+  <a href="index.html">Inicio</a>
+  <span>›</span>
+  <span class="breadcrumb-current" id="breadcrumbCat">—</span>
+  <span>›</span>
+  <span class="breadcrumb-current" id="breadcrumbName">—</span>
+</div>
+
+<!-- CONTENIDO PRINCIPAL (se rellena por JS) -->
+<div id="detailContent">
+  <div class="detail-loading">
+    <span class="loader-icon">⟳</span>
+    <span>Cargando producto…</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="f-logo-wrap">
+        <img class="f-logo-img" src="https://i.ibb.co/wZNYJVXL/eros-logo-transparente-4k.png" alt="Eros" onerror="this.style.display='none'">
+        <span style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--neon);font-weight:500;">Eros Sex Shop</span>
+      </div>
+      <p class="f-desc">Tu tienda íntima de confianza. Discreción, calidad y atención personalizada en cada pedido.<br>Mocovi 1213, Villa María, Córdoba.</p>
+      <div class="f-socials">
+        <a class="f-soc" href="https://instagram.com/eros.sexshop.vm" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a class="f-soc" href="https://www.facebook.com/profile.php?id=61578901053243" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+        <a class="f-soc" href="https://wa.me/5493534418865" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Navegación</h4>
+      <a href="index.html">Todos los productos</a>
+      <a href="index.html" onclick="sessionStorage.setItem('filtro','Vibradores')">Vibradores</a>
+      <a href="index.html" onclick="sessionStorage.setItem('filtro','Anal')">Anal</a>
+      <a href="index.html" onclick="sessionStorage.setItem('filtro','BDSM')">BDSM</a>
+    </div>
+    <div class="f-col">
+      <h4>Contacto</h4>
+      <a href="https://wa.me/5493534418865" target="_blank">WhatsApp</a>
+      <a href="https://instagram.com/eros.sexshop.vm" target="_blank">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61578901053243" target="_blank">Facebook</a>
+      <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank">Defensa del Consumidor</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Eros Sex Shop · CUIT 27-26495062-2 · Todos los derechos reservados.</span>
+    <a href="https://erossexshopvm.mitiendanube.com/contacto/?order_cancellation_without_id=true" target="_blank">Botón de arrepentimiento</a>
+  </div>
+</footer>
+
+<!-- WA FLOAT -->
+<a class="wa-float" id="waFloat" href="https://wa.me/5493534418865" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+</a>
+
+<!-- ▼ Catálogo compartido ▼ -->
+<script src="productos.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   CONFIGURACIÓN — CAMBIÁ SOLO ESTE VALOR
+══════════════════════════════════════════════════════ */
+const WA_NUMBER = '5493534418865'; // ej: '5493534418865'
+
+/* ══════════════════════════════════════════════════════
+   LÓGICA DE LA PÁGINA DE DETALLE
+══════════════════════════════════════════════════════ */
+const SVG_WA_LG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.126 1.528 5.856L0 24l6.335-1.506A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>`;
+
+const fp = n => '$\u202F' + Number(n).toLocaleString('es-AR');
+const waUrl = (name) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola! Estoy interesado en el producto: ' + name)}`;
+
+/* Lee ?id=X de la URL */
+function getProductId() {
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+/* Busca el producto en MIS_PRODUCTOS */
+function findProduct(id) {
+  if (typeof MIS_PRODUCTOS === 'undefined') return null;
+  return MIS_PRODUCTOS.find(p => String(p.id) === String(id)) || null;
+}
+
+/* Productos relacionados (misma categoría, distinto id, máx 4) */
+function getRelated(p) {
+  if (typeof MIS_PRODUCTOS === 'undefined') return [];
+  return MIS_PRODUCTOS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
+}
+
+/* Renderiza la página de detalle */
+function renderDetail(p) {
+  const disc = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const link = waUrl(p.name);
+
+  /* título de la pestaña */
+  document.title = p.name + ' — Eros Sex Shop';
+
+  /* breadcrumb */
+  document.getElementById('breadcrumbCat').textContent  = p.cat;
+  document.getElementById('breadcrumbName').textContent = p.name;
+
+  /* botón WA flotante con mensaje del producto */
+  document.getElementById('waFloat').href = link;
+
+  /* specs: podés ampliar este objeto agregando campos en productos.js */
+  const specs = [
+    { label: 'Categoría',   value: p.cat },
+    { label: 'Precio',      value: fp(p.price) },
+    p.old  ? { label: 'Precio anterior', value: fp(p.old) } : null,
+    p.stock ? { label: 'Stock',  value: p.stock + ' unidades' } : null,
+    p.ml    ? { label: 'Contenido', value: p.ml } : null,
+    p.color ? { label: 'Color',  value: p.color } : null,
+    p.marca ? { label: 'Marca',  value: p.marca } : null,
+    { label: 'Envío',      value: 'A todo el país' },
+    { label: 'Pago',       value: 'Por WhatsApp · Efectivo · Transferencia' },
+  ].filter(Boolean);
+
+  const related = getRelated(p);
+
+  document.getElementById('detailContent').innerHTML = `
+    <!-- DETALLE -->
+    <div class="detail-wrap">
+
+      <!-- Columna imagen -->
+      <div class="detail-gallery">
+        <div class="detail-img-main">
+          ${p.img
+            ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+            : ''}
+          <div class="detail-emoji-lg" ${p.img ? 'style="display:none"' : ''}>${p.e || '📦'}</div>
+          <div class="detail-badge">
+            <span class="d-badge d-badge-free">Envíos a todo el país</span>
+            ${disc ? `<span class="d-badge d-badge-off">-${disc}%</span>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna info -->
+      <div class="detail-info">
+        <div>
+          <p class="detail-cat">${p.cat}</p>
+          <h1 class="detail-name">${p.name}</h1>
+        </div>
+        <div class="detail-divider"></div>
+
+        <!-- Precio -->
+        <div class="detail-price-wrap">
+          <span class="detail-price">${fp(p.price)}</span>
+          ${p.old ? `<span class="detail-price-old">${fp(p.old)}</span><span class="detail-price-off">-${disc}%</span>` : ''}
+        </div>
+
+        <!-- Descripción (si existe el campo 'desc' en productos.js) -->
+        ${p.desc ? `<p class="detail-desc">${p.desc}</p>` : ''}
+
+        <!-- Especificaciones -->
+        <div class="detail-specs">
+          ${specs.map(s => `
+            <div class="spec-row">
+              <div class="spec-label">${s.label}</div>
+              <div class="spec-value">${s.value}</div>
+            </div>`).join('')}
+        </div>
+
+        <!-- CTAs -->
+        <div class="detail-actions">
+          <a class="btn-wa-main" href="${link}" target="_blank" rel="noopener">
+            ${SVG_WA_LG} Comprar por WhatsApp
+          </a>
+          <a class="btn-back" href="index.html">
+            ← Seguir comprando
+          </a>
+        </div>
+
+        <!-- Trust mini -->
+        <div class="detail-trust">
+          <div class="dtrust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Envíos a todo el país
+          </div>
+          <div class="dtrust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Compra privada
+          </div>
+          <div class="dtrust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Pago seguro
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELACIONADOS -->
+    ${related.length ? `
+    <div class="related-section">
+      <h2 class="related-title">Más de <em>${p.cat}</em></h2>
+      <div class="related-grid">
+        ${related.map(r => `
+          <a class="related-card" href="producto-detalle.html?id=${r.id}">
+            <div class="related-img">
+              ${r.img ? `<img src="${r.img}" alt="${r.name}" loading="lazy">` : ''}
+              <div class="related-emoji" ${r.img ? 'style="display:none"' : ''}>${r.e || '📦'}</div>
+            </div>
+            <div class="related-body">
+              <div class="related-name">${r.name}</div>
+              <div class="related-price">${fp(r.price)}</div>
+            </div>
+          </a>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function renderError(id) {
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-error">
+      <span style="font-size:32px">⚠️</span>
+      <span>No se encontró el producto con ID <strong>${id}</strong>.</span>
+      <a href="index.html">← Volver al catálogo</a>
+    </div>`;
+}
+
+/* ── ARRANQUE ── */
+window.addEventListener('load', () => {
+  const id = getProductId();
+  if (!id) { renderError('—'); return; }
+  const p = findProduct(id);
+  p ? renderDetail(p) : renderError(id);
+});
+
+/* ── DRAWER (mobile) ── */
+function openDrawer()  { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeDrawer(); });
+function checkMobile() { document.querySelector('.ham-btn').style.display = window.innerWidth<=768?'flex':'none'; }
+checkMobile(); window.addEventListener('resize', checkMobile);
+</script>
+</body>
+</html>
