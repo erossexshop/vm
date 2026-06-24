@@ -798,126 +798,136 @@ img{max-width:100%;display:block}
 
 <script src="productos.js"></script>
 <script>
-const WA = '5493534418865';
-const CATS = ['Todos','Fragancias','Geles y lubricantes','Anal','Vibradores','Succionadores','Copas menstruales','Masturbadores','Realistas','BDSM','Anillos','Juegos','Bolas chinas','Cuidados e higiene','Parejas'];
-const _FALLBACK = [{id:0,name:'Cargando productos...',cat:'Todos',price:0,e:'...'}];
-let currentCategory = 'Todos';
-
-function productUrl(id){return 'producto-detalle.html?id=' + encodeURIComponent(id)}
-function money(n){return '$' + Number(n || 0).toLocaleString('es-AR')}
-function normalize(str){return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-
-function renderProducts(list){
-  const grid = document.getElementById('pgrid');
-  const count = document.getElementById('productsCount');
-  if(!grid) return;
-  count.textContent = list.length ? list.length + ' productos' : 'Sin resultados';
-  if(!list.length){
-    grid.innerHTML = '<div class="no-results">No se encontraron productos.</div>';
-    return;
+  // 1. El escudo protector contra código malicioso
+  function escapeHTML(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
-  grid.innerHTML = list.map(p => `
-    <a class="product-card" href="${productUrl(p.id)}">
-      <div class="product-img">
-        ${p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">` : ''}
-        <div class="emoji-placeholder" ${p.img ? 'style="display:none"' : ''}>${p.e || '•'}</div>
-      </div>
-      <div class="product-info">
-        <span class="product-cat">${p.cat || ''}</span>
-        <h3 class="product-title">${p.name}</h3>
-        <div class="product-price">${money(p.price)}</div>
-        <span class="buy-btn">Ver detalle</span>
-      </div>
-    </a>`).join('');
-}
 
-function getData(){return (typeof MIS_PRODUCTOS !== 'undefined' && MIS_PRODUCTOS.length) ? MIS_PRODUCTOS : _FALLBACK}
+  const WA = '5493534418865';
+  const CATS = ['Todos','Fragancias','Geles y lubricantes','Anal','Vibradores','Succionadores','Copas menstruales','Masturbadores','Realistas','BDSM','Anillos','Juegos','Bolas chinas','Cuidados e higiene','Parejas'];
+  const _FALLBACK = [{id:0,name:'Cargando productos...',cat:'Todos',price:0,e:'...'}];
+  let currentCategory = 'Todos';
 
-function filterProducts(category){
-  currentCategory = category;
-  document.getElementById('productsTitle').innerHTML = category === 'Todos' ? 'Shop' : category;
-  
-  const search = document.getElementById('searchInput');
-  if(search) search.value = '';
-  
-  const data = getData();
-  
-  // FILTRO OPTIMIZADO: Convierte a minúsculas y limpia espacios extras para evitar fallos
-  if (category === 'Todos') {
-    renderProducts(data);
-  } else {
-    const targetCat = normalize(category.trim());
-    renderProducts(data.filter(p => (p.cats || [p.cat]).some(c => normalize(c).includes(targetCat))));
+  function productUrl(id){return 'producto-detalle.html?id=' + encodeURIComponent(id)}
+  function money(n){return '$' + Number(n || 0).toLocaleString('es-AR')}
+  function normalize(str){return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+
+  // 2. Aquí es donde realmente se dibuja tu catálogo: ¡ya integrado y seguro!
+  function renderProducts(list){
+    const grid = document.getElementById('pgrid');
+    const count = document.getElementById('productsCount');
+    if(!grid) return;
+    count.textContent = list.length ? list.length + ' productos' : 'Sin resultados';
+    if(!list.length){
+      grid.innerHTML = '<div class="no-results">No se encontraron productos.</div>';
+      return;
+    }
+    grid.innerHTML = list.map(p => `
+      <a class="product-card" href="${productUrl(p.id)}">
+        <div class="product-img">
+          ${p.img ? `<img src="${p.img}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">` : ''}
+          <div class="emoji-placeholder" ${p.img ? 'style="display:none"' : ''}>${p.e || '•'}</div>
+        </div>
+        <div class="product-info">
+          <span class="product-cat">${escapeHTML(p.cat || '')}</span>
+          <h3 class="product-title">${escapeHTML(p.name)}</h3>
+          <div class="product-price">${money(p.price)}</div>
+          <span class="buy-btn">Ver detalle</span>
+        </div>
+      </a>`).join('');
   }
-  
-  document.getElementById('productos-section').scrollIntoView({behavior:'smooth',block:'start'});
-}
 
-function handleSearch(query){
-  const q = normalize(query.trim());
-  const isFeatured = currentCategory === '__featured__';
-  const isSpecial = currentCategory === 'Todos' || currentCategory.startsWith('__');
-  const data = getData().filter(p => isSpecial ? true : (p.cats || [p.cat]).some(c => normalize(c) === normalize(currentCategory)));
-  if(!q){ isFeatured ? showFeatured() : renderProducts(data); return; }
-  renderProducts(data.filter(p => [p.name, ...(p.cats || [p.cat]), p.desc, p.marca].some(v => normalize(v).includes(q))));
-}
+  function getData(){return (typeof MIS_PRODUCTOS !== 'undefined' && MIS_PRODUCTOS.length) ? MIS_PRODUCTOS : _FALLBACK}
 
-function filterSection(sectionName, cats){
-  currentCategory = '__section__';
-  document.getElementById('productsTitle').innerHTML = sectionName;
-  const search = document.getElementById('searchInput');
-  if(search) search.value = '';
-  const data = getData();
-  const normalizedCats = cats.map(normalize);
-  renderProducts(data.filter(p => (p.cats || [p.cat]).some(pc => normalizedCats.some(nc => normalize(pc).includes(nc)))));
-  document.getElementById('productos-section').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function showFeatured(){
-  currentCategory = '__featured__';
-  document.getElementById('productsTitle').innerHTML = 'Destacados';
-  const data = getData();
-  const featured = data.filter(p => p.featured).slice(0, 4);
-  renderProducts(featured.length ? featured : data.slice(0, 4));
-}
-
-function openMenu(){document.getElementById('menuOverlay').classList.add('open');document.body.classList.add('menu-open')}
-function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');document.body.classList.remove('menu-open')}
-function toggleAccess(force){
-  const panel = document.getElementById('accessPanel');
-  const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
-  panel.classList.toggle('open',open);
-  document.body.classList.toggle('access-open',open);
-}
-function toggleAccessClass(btn){
-  const cls = btn.dataset.class;
-  if(!cls) return;
-  document.body.classList.toggle(cls);
-  btn.classList.toggle('active',document.body.classList.contains(cls));
-}
-function resetAccess(){
-  ['big-text','high-contrast'].forEach(c => document.body.classList.remove(c));
-  document.querySelectorAll('.access-card.active').forEach(b => b.classList.remove('active'));
-}
-document.addEventListener('keydown',e => {if(e.key === 'Escape'){closeMenu();toggleAccess(false)}});
-function updateHeaderState(){
-  const topbar = document.querySelector('.topbar');
-  if(topbar) topbar.classList.toggle('scrolled',window.scrollY > 40);
-}
-updateHeaderState();
-window.addEventListener('scroll',updateHeaderState,{passive:true});
-
-MIS_PRODUCTOS_PROMISE.then(productos => {
-  const filtro = sessionStorage.getItem('filtro');
-  if(filtro){
-    sessionStorage.removeItem('filtro');
-    filterProducts(filtro);
-  } else {
-    showFeatured();
+  function filterProducts(category){
+    currentCategory = category;
+    document.getElementById('productsTitle').innerHTML = category === 'Todos' ? 'Shop' : escapeHTML(category);
+    
+    const search = document.getElementById('searchInput');
+    if(search) search.value = '';
+    
+    const data = getData();
+    
+    if (category === 'Todos') {
+      renderProducts(data);
+    } else {
+      const targetCat = normalize(category.trim());
+      renderProducts(data.filter(p => (p.cats || [p.cat]).some(c => normalize(c).includes(targetCat))));
+    }
+    
+    document.getElementById('productos-section').scrollIntoView({behavior:'smooth',block:'start'});
   }
-});
+
+  function handleSearch(query){
+    const q = normalize(query.trim());
+    const isFeatured = currentCategory === '__featured__';
+    const isSpecial = currentCategory === 'Todos' || currentCategory.startsWith('__');
+    const data = getData().filter(p => isSpecial ? true : (p.cats || [p.cat]).some(c => normalize(c) === normalize(currentCategory)));
+    if(!q){ isFeatured ? showFeatured() : renderProducts(data); return; }
+    renderProducts(data.filter(p => [p.name, ...(p.cats || [p.cat]), p.desc, p.marca].some(v => normalize(v).includes(q))));
+  }
+
+  function filterSection(sectionName, cats){
+    currentCategory = '__section__';
+    document.getElementById('productsTitle').innerHTML = escapeHTML(sectionName);
+    const search = document.getElementById('searchInput');
+    if(search) search.value = '';
+    const data = getData();
+    const normalizedCats = cats.map(normalize);
+    renderProducts(data.filter(p => (p.cats || [p.cat]).some(pc => normalizedCats.some(nc => normalize(pc).includes(nc)))));
+    document.getElementById('productos-section').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function showFeatured(){
+    currentCategory = '__featured__';
+    document.getElementById('productsTitle').innerHTML = 'Destacados';
+    const data = getData();
+    const featured = data.filter(p => p.featured).slice(0, 4);
+    renderProducts(featured.length ? featured : data.slice(0, 4));
+  }
+
+  function openMenu(){document.getElementById('menuOverlay').classList.add('open');document.body.classList.add('menu-open')}
+  function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');document.body.classList.remove('menu-open')}
+  function toggleAccess(force){
+    const panel = document.getElementById('accessPanel');
+    const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
+    panel.classList.toggle('open',open);
+    document.body.classList.toggle('access-open',open);
+  }
+  function toggleAccessClass(btn){
+    const cls = btn.dataset.class;
+    if(!cls) return;
+    document.body.classList.toggle(cls);
+    btn.classList.toggle('active',document.body.classList.contains(cls));
+  }
+  function resetAccess(){
+    ['big-text','high-contrast'].forEach(c => document.body.classList.remove(c));
+    document.querySelectorAll('.access-card.active').forEach(b => b.classList.remove('active'));
+  }
+  document.addEventListener('keydown',e => {if(e.key === 'Escape'){closeMenu();toggleAccess(false)}});
+  function updateHeaderState(){
+    const topbar = document.querySelector('.topbar');
+    if(topbar) topbar.classList.toggle('scrolled',window.scrollY > 40);
+  }
+  updateHeaderState();
+  window.addEventListener('scroll',updateHeaderState,{passive:true});
+
+  MIS_PRODUCTOS_PROMISE.then(productos => {
+    const filtro = sessionStorage.getItem('filtro');
+    if(filtro){
+      sessionStorage.removeItem('filtro');
+      filterProducts(filtro);
+    } else {
+      showFeatured();
+    }
+  });
 </script>
-<script>
 /* Disuasión básica de copia */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
