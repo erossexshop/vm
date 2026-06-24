@@ -372,15 +372,29 @@ img{max-width:100%;display:block}
 
 <script src="productos.js"></script>
 <script>
+// 1. Escudo protector contra código malicioso (XSS)
+function escapeHTML(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 const WA_NUMBER = '5493534418865';
 const money = n => '$' + Number(n || 0).toLocaleString('es-AR');
+
 const waUrl = name => {
   const pageUrl = window.location.href;
   const msg = `Hola! Estoy interesado en el producto: ${name}\n🔗 ${pageUrl}`;
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 };
+
 function getProductId(){return new URLSearchParams(window.location.search).get('id')}
 function findProduct(id){return (window.MIS_PRODUCTOS || []).find(p => String(p.id) === String(id))}
+
 function relatedProducts(p){
   const pCats = p.cats || [p.cat];
   return (window.MIS_PRODUCTOS || []).filter(x => {
@@ -388,35 +402,43 @@ function relatedProducts(p){
     return xCats.some(c => pCats.includes(c)) && x.id !== p.id;
   }).slice(0,4);
 }
+
 function renderError(id){
-  document.getElementById('detailContent').innerHTML = `<div class="state"><div>No se encontro el producto con ID ${id || '-'}.<br><br><a class="pill secondary" href="index.html">Volver al catalogo</a></div></div>`;
+  // Sanitizamos el ID por seguridad si se va a renderizar en el HTML
+  const safeId = escapeHTML(id);
+  document.getElementById('detailContent').innerHTML = `<div class="state"><div>No se encontro el producto con ID ${safeId || '-'}.<br><br><a class="pill secondary" href="index.html">Volver al catalogo</a></div></div>`;
 }
+
 function renderDetail(p){
   const link = waUrl(p.name);
   document.title = p.name + ' - Eros Sex Shop';
   document.getElementById('waTop').href = link;
+  
+  // Sanitizamos los textos antes de armar las especificaciones
   const specs = [
-    ['Categoria',p.cat],
-    ['Precio',money(p.price)],
-    p.marca ? ['Marca',p.marca] : null,
-    ['Envio','A todo el pais'],
-    ['Pago','WhatsApp, efectivo o transferencia']
+    ['Categoria', escapeHTML(p.cat)],
+    ['Precio', money(p.price)],
+    p.marca ? ['Marca', escapeHTML(p.marca)] : null,
+    ['Envio', 'A todo el pais'],
+    ['Pago', 'WhatsApp, efectivo o transferencia']
   ].filter(Boolean);
+  
   const related = relatedProducts(p);
+  
   document.getElementById('detailContent').innerHTML = `
     <section class="detail-hero">
       <div class="product-stage-wrap">
         <div class="product-stage">
-          ${p.img ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">` : ''}
-          <div class="emoji" ${p.img ? 'style="display:none"' : ''}>${p.e || '*'}</div>
+          ${p.img ? `<img src="${p.img}" alt="${escapeHTML(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">` : ''}
+          <div class="emoji" ${p.img ? 'style="style="display:none"="' : ''}>${p.e || '*'}</div>
         </div>
       </div>
       <div class="detail-info">
-        <div class="breadcrumb"><a href="index.html">Shop</a><span>/</span><span>${p.cat}</span></div>
-        <p class="detail-cat">${p.cat}</p>
-        <h1 class="detail-name">${p.name}</h1>
+        <div class="breadcrumb"><a href="index.html">Shop</a><span>/</span><span>${escapeHTML(p.cat)}</span></div>
+        <p class="detail-cat">${escapeHTML(p.cat)}</p>
+        <h1 class="detail-name">${escapeHTML(p.name)}</h1>
         <div class="detail-price">${money(p.price)}</div>
-        ${p.desc ? `<p class="detail-copy">${p.desc}</p>` : '<p class="detail-copy">Consultanos por disponibilidad, formas de pago y envio discreto.</p>'}
+        ${p.desc ? `<p class="detail-copy">${escapeHTML(p.desc)}</p>` : '<p class="detail-copy">Consultanos por disponibilidad, formas de pago y envio discreto.</p>'}
         <div class="specs">
           ${specs.map(s => `<div class="spec-row"><span>${s[0]}</span><span>${s[1]}</span></div>`).join('')}
         </div>
@@ -428,13 +450,13 @@ function renderDetail(p){
     </section>
     ${related.length ? `
       <section class="related-section">
-        <h2 class="related-title">Mas de <em>${p.cat}</em></h2>
+        <h2 class="related-title">Mas de <em>${escapeHTML(p.cat)}</em></h2>
         <div class="related-grid">
           ${related.map(r => `
             <a class="related-card" href="producto-detalle.html?id=${r.id}">
-              <div class="related-img">${r.img ? `<img src="${r.img}" alt="${r.name}" loading="lazy">` : `<span>${r.e || '*'}</span>`}</div>
+              <div class="related-img">${r.img ? `<img src="${r.img}" alt="${escapeHTML(r.name)}" loading="lazy">` : `<span>${r.e || '*'}</span>`}</div>
               <div class="related-body">
-                <div class="related-name">${r.name}</div>
+                <div class="related-name">${escapeHTML(r.name)}</div>
                 <div class="related-price">${money(r.price)}</div>
               </div>
             </a>`).join('')}
@@ -442,31 +464,39 @@ function renderDetail(p){
       </section>` : ''}
   `;
 }
+
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');document.body.classList.add('menu-open')}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');document.body.classList.remove('menu-open')}
+
 function toggleAccess(force){
   const panel = document.getElementById('accessPanel');
   const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
   panel.classList.toggle('open',open);
   document.body.classList.toggle('access-open',open);
 }
+
 function toggleAccessClass(btn){
   const cls = btn.dataset.class;
   if(!cls) return;
   document.body.classList.toggle(cls);
   btn.classList.toggle('active',document.body.classList.contains(cls));
 }
+
 function resetAccess(){
   ['big-text','bigger-cursor','line-height','hide-images','readable-font','high-contrast','pause-animations'].forEach(c => document.body.classList.remove(c));
   document.querySelectorAll('.access-card.active').forEach(b => b.classList.remove('active'));
 }
+
 document.addEventListener('keydown',e => {if(e.key === 'Escape'){closeMenu();toggleAccess(false)}});
+
 function updateHeaderState(){
   const topbar = document.querySelector('.topbar');
   if(topbar) topbar.classList.toggle('scrolled',window.scrollY > 40);
 }
 updateHeaderState();
 window.addEventListener('scroll',updateHeaderState,{passive:true});
+
+// Se ejecuta una vez que las Vercel Serverless Functions devuelven los datos limpios
 MIS_PRODUCTOS_PROMISE.then(() => {
   const id = getProductId();
   const product = id ? findProduct(id) : null;
