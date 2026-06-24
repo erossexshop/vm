@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 // Cuando despliegues en Vercel, cambia esta URL por la que te dé Vercel (ej: 'https://tu-proyecto.vercel.app/api/get-productos')
-const API_URL = 'vm-six-tau.vercel.app'; 
+const API_URL = 'vm-six-tau.vercel.app/api/get-productos'; 
 const FETCH_TIMEOUT_MS = 8000;
 
 window.MIS_PRODUCTOS = [];
