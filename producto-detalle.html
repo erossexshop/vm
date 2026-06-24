@@ -404,33 +404,36 @@ function relatedProducts(p){
 }
 
 function renderError(id){
-  // Sanitizamos el ID por seguridad si se va a renderizar en el HTML
   const safeId = escapeHTML(id);
-  document.getElementById('detailContent').innerHTML = `<div class="state"><div>No se encontro el producto con ID ${safeId || '-'}.<br><br><a class="pill secondary" href="index.html">Volver al catalogo</a></div></div>`;
+  document.getElementById('detailContent').innerHTML = `<div class="state"><div>No se encontró el producto con ID ${safeId || '-'}.<br><br><a class="pill secondary" href="index.html">Volver al catálogo</a></div></div>`;
 }
 
 function renderDetail(p){
   const link = waUrl(p.name);
   document.title = p.name + ' - Eros Sex Shop';
-  document.getElementById('waTop').href = link;
   
-  // Sanitizamos los textos antes de armar las especificaciones
+  // Intenta actualizar el botón flotante superior si existe
+  const waTop = document.getElementById('waTop');
+  if(waTop) waTop.href = link;
+  
+  // Estructuramos las especificaciones sanitizadas
   const specs = [
-    ['Categoria', escapeHTML(p.cat)],
+    ['Categoría', escapeHTML(p.cat)],
     ['Precio', money(p.price)],
     p.marca ? ['Marca', escapeHTML(p.marca)] : null,
-    ['Envio', 'A todo el pais'],
+    ['Envío', 'A todo el país'],
     ['Pago', 'WhatsApp, efectivo o transferencia']
   ].filter(Boolean);
   
   const related = relatedProducts(p);
   
+  // Reinyectamos la estructura HTML idéntica a tu diseño original pero sanitizada
   document.getElementById('detailContent').innerHTML = `
     <section class="detail-hero">
       <div class="product-stage-wrap">
         <div class="product-stage">
           ${p.img ? `<img src="${p.img}" alt="${escapeHTML(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">` : ''}
-          <div class="emoji" ${p.img ? 'style="style="display:none"="' : ''}>${p.e || '*'}</div>
+          <div class="emoji" ${p.img ? 'style="display:none"' : ''}>${p.e || '📦'}</div>
         </div>
       </div>
       <div class="detail-info">
@@ -438,7 +441,7 @@ function renderDetail(p){
         <p class="detail-cat">${escapeHTML(p.cat)}</p>
         <h1 class="detail-name">${escapeHTML(p.name)}</h1>
         <div class="detail-price">${money(p.price)}</div>
-        ${p.desc ? `<p class="detail-copy">${escapeHTML(p.desc)}</p>` : '<p class="detail-copy">Consultanos por disponibilidad, formas de pago y envio discreto.</p>'}
+        ${p.desc ? `<p class="detail-copy">${escapeHTML(p.desc)}</p>` : '<p class="detail-copy">Consúltanos por disponibilidad, formas de pago y envío discreto.</p>'}
         <div class="specs">
           ${specs.map(s => `<div class="spec-row"><span>${s[0]}</span><span>${s[1]}</span></div>`).join('')}
         </div>
@@ -450,11 +453,11 @@ function renderDetail(p){
     </section>
     ${related.length ? `
       <section class="related-section">
-        <h2 class="related-title">Mas de <em>${escapeHTML(p.cat)}</em></h2>
+        <h2 class="related-title">Más de <em>${escapeHTML(p.cat)}</em></h2>
         <div class="related-grid">
           ${related.map(r => `
             <a class="related-card" href="producto-detalle.html?id=${r.id}">
-              <div class="related-img">${r.img ? `<img src="${r.img}" alt="${escapeHTML(r.name)}" loading="lazy">` : `<span>${r.e || '*'}</span>`}</div>
+              <div class="related-img">${r.img ? `<img src="${r.img}" alt="${escapeHTML(r.name)}" loading="lazy">` : `<span>${r.e || '📦'}</span>`}</div>
               <div class="related-body">
                 <div class="related-name">${escapeHTML(r.name)}</div>
                 <div class="related-price">${money(r.price)}</div>
@@ -487,7 +490,7 @@ function resetAccess(){
   document.querySelectorAll('.access-card.active').forEach(b => b.classList.remove('active'));
 }
 
-document.addEventListener('keydown',e => {if(e.key === 'Escape'){closeMenu();toggleAccess(false)}});
+document.addEventListener('keydown', e => {if(e.key === 'Escape'){closeMenu();toggleAccess(false)}});
 
 function updateHeaderState(){
   const topbar = document.querySelector('.topbar');
@@ -496,12 +499,14 @@ function updateHeaderState(){
 updateHeaderState();
 window.addEventListener('scroll',updateHeaderState,{passive:true});
 
-// Se ejecuta una vez que las Vercel Serverless Functions devuelven los datos limpios
-MIS_PRODUCTOS_PROMISE.then(() => {
-  const id = getProductId();
-  const product = id ? findProduct(id) : null;
-  product ? renderDetail(product) : renderError(id);
-});
+// Se ejecuta al resolver la promesa de productos.js
+if (window.MIS_PRODUCTOS_PROMISE) {
+  window.MIS_PRODUCTOS_PROMISE.then(() => {
+    const id = getProductId();
+    const product = id ? findProduct(id) : null;
+    product ? renderDetail(product) : renderError(id);
+  });
+}
 </script>
 </body>
 </html>
