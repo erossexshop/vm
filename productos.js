@@ -1,34 +1,27 @@
-/* ═══════════════════════════════════════════════════════════════════════
-   productos.js  —  Eros Sex Shop (Versión Segura vía Proxy Serverless)
-   ═══════════════════════════════════════════════════════════════════════ */
+// productos.js (Ubicado en la raíz de tu repositorio)
 
-// Cuando despliegues en Vercel, cambia esta URL por la que te dé Vercel (ej: 'https://tu-proyecto.vercel.app/api/get-productos')
-const API_URL = 'vm-six-tau.vercel.app/api/get-productos'; 
-const FETCH_TIMEOUT_MS = 8000;
+// 1. Apuntamos directo a tu API segura en Vercel
+const API_URL = 'https://vm-six-tau.vercel.app/api/get-productos';
 
+// Inicializamos las variables globales que esperan index.html y producto-detalle.html
 window.MIS_PRODUCTOS = [];
 
-const MIS_PRODUCTOS_PROMISE = (function () {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-  // Consultamos directamente a nuestra función segura que devuelve el JSON ya listo
-  return fetch(API_URL, { signal: controller.signal })
-    .then(res => {
-      clearTimeout(timer);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json(); // Ahora es un JSON directo, ya no un texto CSV plano
-    })
-    .then(products => {
-      window.MIS_PRODUCTOS = products;
-      console.info('[Eros] ' + products.length + ' productos cargados de forma segura desde el Servidor.');
-      return products;
-    })
-    .catch(err => {
-      clearTimeout(timer);
-      console.error('[Eros] Error crítico cargando catálogo:', err);
-      // Fallback vacío seguro para evitar que la interfaz explote
-      window.MIS_PRODUCTOS = [];
-      return [];
-    });
-})();
+// 2. Creamos la Promesa global que tus HTMLs esperan con .then()
+window.MIS_PRODUCTOS_PROMISE = fetch(API_URL)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error en la respuesta de la API de Vercel');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Guardamos los productos en la variable global para que los filtros la usen
+    window.MIS_PRODUCTOS = data;
+    return data;
+  })
+  .catch(error => {
+    console.error('Error cargando el catálogo desde el proxy:', error);
+    // En caso de error crítico, dejamos un catálogo vacío para que no rompa la interfaz
+    window.MIS_PRODUCTOS = [];
+    return [];
+  });
