@@ -819,7 +819,40 @@ img{max-width:100%;display:block}
   function productUrl(id){return 'producto-detalle.html?id=' + encodeURIComponent(id)}
   function money(n){return '$' + Number(n || 0).toLocaleString('es-AR')}
   function normalize(str){return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
+function renderProducts(list){
+  const grid = document.getElementById('pgrid');
+  const count = document.getElementById('productsCount');
+  if(!grid) return;
+  count.textContent = list.length ? list.length + ' productos' : 'Sin resultados';
+  if(!list.length){
+    grid.innerHTML = '<div class="no-results">No se encontraron productos.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <a class="product-card" href="${productUrl(p.id)}">
+      <div class="product-img">
+        ${p.img ? `<img src="${escapeHTML(p.img)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">` : ''}
+        <div class="emoji-placeholder" ${p.img ? 'style="display:none"' : ''}>${p.e || '•'}</div>
+      </div>
+      <div class="product-info">
+        <span class="product-cat">${escapeHTML(p.cat) || ''}</span>
+        <h3 class="product-title">${escapeHTML(p.name)}</h3>
+        <div class="product-price">${money(p.price)}</div>
+        <span class="buy-btn">Ver detalle</span>
+      </div>
+    </a>`).join('');
+}
+  
   // 2. Renderizado Seguro y Sincronizado
   function renderProducts(list){
     const grid = document.getElementById('pgrid');
