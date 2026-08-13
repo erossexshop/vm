@@ -1,7 +1,7 @@
 // productos.js (Ubicado en la raíz de tu repositorio)
 
 // 1. Apuntamos directo a tu API segura en Vercel
-const API_URL = 'https://vm-six-tau.vercel.app/api/get-productos';
+const API_URL = '/api/get-productos';
 
 // Inicializamos las variables globales que esperan index.html y producto-detalle.html
 window.MIS_PRODUCTOS = [];
